@@ -13,8 +13,14 @@ class PotHoleDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(pothole.Id),
       ),
-      body: Center(
-        child: Text("TODO"),
+      body: Column(
+        children: [
+          Text(
+            "GPS Location : ${pothole.Latitude} , ${pothole.Longitude}",
+          ),
+          Text("Estimated Address : ${pothole.Address}"),
+          Image.file(pothole.Image),
+        ],
       ),
     );
   }

@@ -14,6 +14,8 @@ class PotHole with ChangeNotifier {
   PotHole({
     this.id,
     this.currentPosition,
+    this.address,
+    this.image,
   });
 
   String get Id => id;
@@ -21,25 +23,32 @@ class PotHole with ChangeNotifier {
   String get Address => address;
   File get Image => image;
   Position get CurrentPosition => currentPosition;
-  double get Latitude => currentPosition.latitude;
-  double get Longitude => currentPosition.longitude;
+  double get Latitude =>
+      double.parse(currentPosition.latitude.toStringAsFixed(3));
+  double get Longitude =>
+      double.parse(currentPosition.longitude.toStringAsFixed(3));
 
   getAddressFromLatLng() async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
           currentPosition.latitude, currentPosition.longitude);
       Placemark place = placemarks[0];
-      address = "${place.locality}, ${place.postalCode}, ${place.country}";
+      String addr = "${place.locality}, ${place.postalCode}, ${place.country}";
+      address = addr;
+      print(address);
     } catch (e) {
       print(e);
     }
   }
 
   // Setters
-
   set setPosition(Position pos) {
     currentPosition = pos;
     getAddressFromLatLng();
     notifyListeners();
+  }
+
+  set setImage(File img) {
+    image = img;
   }
 }

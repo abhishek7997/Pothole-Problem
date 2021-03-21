@@ -28,12 +28,12 @@ class PotHoleItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "GPS Coordinates",
+                    "LAT: ${pothole.Latitude}, LONG: ${pothole.Longitude}",
                     style: TextStyle(
                         fontSize: 14.0, fontWeight: FontWeight.normal),
                   ),
                   Text(
-                    "Rough Human Readable Address",
+                    "${pothole.Address}",
                     style: TextStyle(
                         fontSize: 12.0, fontWeight: FontWeight.normal),
                   ),
