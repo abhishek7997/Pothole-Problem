@@ -50,5 +50,6 @@ class PotHole with ChangeNotifier {
 
   set setImage(File img) {
     image = img;
+    notifyListeners();
   }
 }

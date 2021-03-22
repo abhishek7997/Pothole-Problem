@@ -16,48 +16,33 @@ class InputPage extends StatelessWidget {
   static const routeName = '/input-screen';
   TextEditingController addressController = TextEditingController();
   String roughGPSLocation = "";
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     var settingsProvider = Provider.of<PotHole>(context);
-    File _image;
-    final picker = ImagePicker();
-
-    Future getImage() async {
-      final pickedFile = await picker.getImage(source: ImageSource.camera);
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        settingsProvider.setImage = _image;
-      } else {
-        print('No image selected.');
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Input Page'),
       ),
-      body: Column(
-        children: [
-          CustomInputs(),
-          GiveLocation(settingsProvider),
-          TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.blue[800],
-            ),
-            onPressed: () => getImage(),
-            child: Text(
-              "Pick Image",
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
+      body: Center(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // CustomInputs(),
+              GiveLocation(settingsProvider),
+              PickImage(settingsProvider),
+            ],
           ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (settingsProvider.currentPosition != null) {
+          if (settingsProvider.currentPosition != null &&
+              settingsProvider.image != null) {
             print("Adding Pothole - Dummy Data");
             Provider.of<PotHoles>(context, listen: false).addPothole(
               PotHole(
@@ -71,13 +56,83 @@ class InputPage extends StatelessWidget {
                 .showSnackBar(SnackBar(content: Text('Success!')));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Please Update your location')));
+              SnackBar(
+                content: Text(
+                  (settingsProvider.currentPosition == null
+                          ? 'Please Update your location '
+                          : '') +
+                      (settingsProvider.image == null
+                          ? 'Please select an image '
+                          : ''),
+                ),
+              ),
+            );
             return;
           }
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
       ),
+    );
+  }
+}
+
+class PickImage extends StatelessWidget {
+  final settingsProvider;
+  PickImage(this.settingsProvider);
+
+  File _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      settingsProvider.setImage = _image;
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.blue[800],
+          ),
+          onPressed: () => getImage(),
+          child: Column(
+            children: [
+              Icon(
+                Icons.camera,
+                size: 40.0,
+              ),
+              SizedBox(height: 10.0),
+              Text(
+                "Pick Image",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Consumer<PotHole>(
+          builder: (context, data, child) {
+            return settingsProvider.image != null
+                ? Flexible(
+                    child: FractionallySizedBox(
+                      widthFactor: 0.7,
+                      child: Image.file(settingsProvider.Image),
+                    ),
+                  )
+                : Text("No Image is Selected");
+          },
+        ),
+      ],
     );
   }
 }
@@ -105,42 +160,55 @@ class GiveLocation extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(
-            Icons.location_on,
-            size: 46.0,
-            color: Colors.blue,
-          ),
-          SizedBox(height: 10.0),
-          Text(
-            'Get User Location',
-            style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20.0),
-          Consumer<PotHole>(
-            builder: (context, data, child) {
-              return Text(settingsProvider.CurrentPosition != null
-                  ? 'LAT: ${settingsProvider.Latitude} LON: ${settingsProvider.Longitude}'
-                  : "Null Location");
-            },
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.blue[800],
-            ),
-            onPressed: () => _getCurrentLocation(context),
-            child: Text(
-              "Get Current Location",
-              style: TextStyle(
-                color: Colors.black,
+          // Icon(
+          //   Icons.location_on,
+          //   size: 46.0,
+          //   color: Colors.blue,
+          // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue[800],
+                ),
+                onPressed: () => _getCurrentLocation(context),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 40.0,
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      "Get Current Location",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          Consumer<PotHole>(
-            builder: (context, data, child) {
-              return Text(settingsProvider.CurrentPosition != null
-                  ? 'Address : ${settingsProvider.Address}'
-                  : "Null Address");
-            },
+              Column(
+                children: [
+                  Consumer<PotHole>(
+                    builder: (context, data, child) {
+                      return Text(settingsProvider.CurrentPosition != null
+                          ? 'LAT: ${settingsProvider.Latitude} LON: ${settingsProvider.Longitude}'
+                          : "Location is set to NULL");
+                    },
+                  ),
+                  SizedBox(height: 10.0),
+                  Consumer<PotHole>(
+                    builder: (context, data, child) {
+                      return Text(settingsProvider.CurrentPosition != null
+                          ? 'Address : ${settingsProvider.Address}'
+                          : "Address is set to NULL");
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

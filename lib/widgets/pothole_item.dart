@@ -41,7 +41,7 @@ class PotHoleItem extends StatelessWidget {
                     Text(
                       "LAT: ${pothole.Latitude}, LONG: ${pothole.Longitude}",
                       style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                          fontSize: 14.0, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10.0),
                     SizedBox(
