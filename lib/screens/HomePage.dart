@@ -7,6 +7,7 @@ import '../screens/input_screen.dart';
 import '../providers/pothole.dart';
 
 class MyHomePage extends StatefulWidget {
+  static const routeName = '/home-page';
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "110476607246",
+    "project_id": "pothole-problem",
+    "storage_bucket": "pothole-problem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110476607246:android:fd0c8e6aa892e02e1d215f",
+        "android_client_info": {
+          "package_name": "com.example.pothole_problem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "110476607246-gk0dorurg8p1qrlalca7u7jt7hl695bl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOWLgQveuF3GclamgHixTl_QPz1UwHHoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "110476607246-gk0dorurg8p1qrlalca7u7jt7hl695bl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
