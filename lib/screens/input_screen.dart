@@ -37,6 +37,7 @@ class InputPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getCurrentUser();
     var settingsProvider = Provider.of<PotHole>(context);
     return Scaffold(
       appBar: AppBar(
@@ -105,7 +106,8 @@ class PickImage extends StatelessWidget {
   final picker = ImagePicker();
 
   Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       settingsProvider.setImage = _image;
@@ -157,20 +159,41 @@ class PickImage extends StatelessWidget {
   }
 }
 
-class GiveLocation extends StatelessWidget {
+class GiveLocation extends StatelessWidget with ChangeNotifier {
   final settingsProvider;
   GiveLocation(this.settingsProvider);
 
-  _getCurrentLocation(BuildContext context) async {
-    Geolocator.getCurrentPosition(
+  Future _getCurrentLocation(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best,
-            forceAndroidLocationManager: true)
+            forceAndroidLocationManager: false)
         .then((Position position) {
       String id = DateTime.now().toString();
       settingsProvider.setPosition = position;
       settingsProvider.setId = id;
       // Position P = Position.fromMap({'latitude': 38.8951, 'longitude': -77.0364});
-      // print("Position from map is : $P");
+      print("Position from map is : $position");
     }).catchError((e) {
       print(e);
     });
@@ -196,7 +219,11 @@ class GiveLocation extends StatelessWidget {
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.blue[800],
                 ),
-                onPressed: () => _getCurrentLocation(context),
+                onPressed: () async {
+                  print("AWAIT LOCATION! Start");
+                  await _getCurrentLocation(context);
+                  print("AWAIT LOCATION! End");
+                },
                 child: Column(
                   children: [
                     Icon(
@@ -240,71 +267,71 @@ class GiveLocation extends StatelessWidget {
   }
 }
 
-class CustomInputs extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Rough Location',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              style: TextStyle(
-                color: Colors.deepPurpleAccent,
-                fontFamily: 'OpenSans',
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            TextFormField(
-              maxLines: 5,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Validate returns true if the form is valid, or false
-                  // otherwise.
-                  if (_formKey.currentState.validate()) {
-                    // If the form is valid, display a Snackbar.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Processing Data')));
-                  }
-                },
-                child: Text('Submit'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class CustomInputs extends StatelessWidget {
+//   final _formKey = GlobalKey<FormState>();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: EdgeInsets.all(8.0),
+//       child: Form(
+//         key: _formKey,
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: <Widget>[
+//             TextFormField(
+//               decoration: InputDecoration(
+//                 labelText: 'Rough Location',
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//               validator: (value) {
+//                 if (value.isEmpty) {
+//                   return 'Please enter some text';
+//                 }
+//                 return null;
+//               },
+//               style: TextStyle(
+//                 color: Colors.deepPurpleAccent,
+//                 fontFamily: 'OpenSans',
+//               ),
+//             ),
+//             SizedBox(
+//               height: 10.0,
+//             ),
+//             TextFormField(
+//               maxLines: 5,
+//               decoration: InputDecoration(
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//               validator: (value) {
+//                 if (value.isEmpty) {
+//                   return 'Please enter some text';
+//                 }
+//                 return null;
+//               },
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 16.0),
+//               child: ElevatedButton(
+//                 onPressed: () {
+//                   // Validate returns true if the form is valid, or false
+//                   // otherwise.
+//                   if (_formKey.currentState.validate()) {
+//                     // If the form is valid, display a Snackbar.
+//                     ScaffoldMessenger.of(context).showSnackBar(
+//                         SnackBar(content: Text('Processing Data')));
+//                   }
+//                 },
+//                 child: Text('Submit'),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
