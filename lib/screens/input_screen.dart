@@ -104,7 +104,7 @@ class PickImage extends StatelessWidget {
 
   Future getImage() async {
     final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 40);
+        await picker.getImage(source: ImageSource.camera, imageQuality: 30);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       settingsProvider.setImage = _image;

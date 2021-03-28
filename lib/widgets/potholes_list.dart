@@ -85,6 +85,10 @@ class _PotHolesListState extends State<PotHolesList> {
     super.initState();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var potholesData = Provider.of<PotHoles>(context);
@@ -102,6 +106,7 @@ class _PotHolesListState extends State<PotHolesList> {
           print(snapshot.data);
           //buildList(potholesData, snapshot);
           return ListView.builder(
+            physics: AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(10.0),
             itemCount: snapshot.data.length,
             itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
