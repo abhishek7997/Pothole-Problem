@@ -23,7 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: PotHolesList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
           Navigator.of(context).pushNamed(InputPage.routeName);
         },
         child: Icon(Icons.add),

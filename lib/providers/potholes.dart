@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import './pothole.dart';
 
 class PotHoles with ChangeNotifier {
@@ -24,11 +23,24 @@ class PotHoles with ChangeNotifier {
     // if (_showFavoritesOnly) {
     //   return _items.where((prodItem) => prodItem.isFavorite).toList();
     // }
-    return [..._items];
+    return _items;
   }
 
   void addPothole(value) {
     _items.add(value);
-    notifyListeners();
+    //notifyListeners();
+  }
+
+  void addAllPotholes(value) {
+    _items.addAll(value);
+    //notifyListeners();
+  }
+
+  void clear() {
+    _items.clear();
+  }
+
+  bool empty() {
+    return _items.isEmpty;
   }
 }

@@ -18,6 +18,9 @@ class PotHoleDetailScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Center(
+                child: Text("Unique ID : ${pothole.Id}"),
+              ),
               Table(
                 // border: TableBorder.all(),
                 children: [

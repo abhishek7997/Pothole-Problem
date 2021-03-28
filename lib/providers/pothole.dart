@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 class PotHole with ChangeNotifier {
-  final String id;
+  String id;
   String roughGPSLocation;
   String address;
   File image;
@@ -35,7 +36,7 @@ class PotHole with ChangeNotifier {
       Placemark place = placemarks[0];
       String addr = "${place.locality}, ${place.postalCode}, ${place.country}";
       address = addr;
-      print(address);
+      // print(address);
     } catch (e) {
       print(e);
     }
@@ -52,4 +53,16 @@ class PotHole with ChangeNotifier {
     image = img;
     notifyListeners();
   }
+
+  set setId(String uid) {
+    id = uid;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'latitude': currentPosition.latitude,
+        'longitude': currentPosition.longitude,
+        'address': address,
+        'image': base64Encode(image.readAsBytesSync()),
+      };
 }

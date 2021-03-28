@@ -3,25 +3,41 @@ import 'package:geolocator/geolocator.dart';
 import '../providers/potholes.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/pothole.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+User loggedInUser;
 
 class InputPage extends StatelessWidget {
   static const routeName = '/input-screen';
   TextEditingController addressController = TextEditingController();
   String roughGPSLocation = "";
   final _formKey = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
+
+  String messageText;
+
+  void getCurrentUser() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        print(loggedInUser.email);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var settingsProvider = Provider.of<PotHole>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Input Page'),
@@ -41,17 +57,21 @@ class InputPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          String id = DateTime.now().toString();
           if (settingsProvider.currentPosition != null &&
               settingsProvider.image != null) {
-            print("Adding Pothole - Dummy Data");
+            print("Adding Pothole - Dummy Data with id : $id");
             Provider.of<PotHoles>(context, listen: false).addPothole(
               PotHole(
-                id: 'p5',
+                id: settingsProvider.Id,
                 currentPosition: settingsProvider.CurrentPosition,
                 address: settingsProvider.Address,
                 image: settingsProvider.Image,
               ),
             );
+
+            _firestore.collection('potholes').add(settingsProvider.toJson());
+
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text('Success!')));
           } else {
@@ -146,7 +166,11 @@ class GiveLocation extends StatelessWidget {
             desiredAccuracy: LocationAccuracy.best,
             forceAndroidLocationManager: true)
         .then((Position position) {
+      String id = DateTime.now().toString();
       settingsProvider.setPosition = position;
+      settingsProvider.setId = id;
+      // Position P = Position.fromMap({'latitude': 38.8951, 'longitude': -77.0364});
+      // print("Position from map is : $P");
     }).catchError((e) {
       print(e);
     });

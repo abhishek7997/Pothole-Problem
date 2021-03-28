@@ -59,7 +59,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 // ),
                 TypewriterAnimatedTextKit(
                   speed: Duration(milliseconds: 100),
-                  isRepeatingAnimation: false,
+                  // isRepeatingAnimation: false,
                   text: ['Pothole App'],
                   textStyle: TextStyle(
                     letterSpacing: 5.0,
