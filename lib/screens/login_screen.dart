@@ -48,8 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
-                  //Do something with the user input.
-                  email = value;
+                  email = value.trim();
                 },
                 decoration: InputDecoration(
                   hintText: 'Enter your email',
@@ -77,7 +76,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 textAlign: TextAlign.center,
                 onChanged: (value) {
-                  //Do something with the user input.
                   password = value;
                 },
                 decoration: InputDecoration(

@@ -3,8 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import '../providers/potholes.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter/src/widgets/basic.dart';
-import 'package:flutter/src/widgets/container.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/pothole.dart';
 import 'package:provider/provider.dart';
@@ -17,28 +15,27 @@ User loggedInUser;
 class InputPage extends StatelessWidget {
   static const routeName = '/input-screen';
   TextEditingController addressController = TextEditingController();
-  String roughGPSLocation = "";
   final _formKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
 
-  String messageText;
-
-  void getCurrentUser() async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser.email);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // void getCurrentUser() async {
+  //   try {
+  //     final user = _auth.currentUser;
+  //     if (user != null) {
+  //       loggedInUser = user;
+  //       print(loggedInUser.email);
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    getCurrentUser();
+    // getCurrentUser();
     var settingsProvider = Provider.of<PotHole>(context);
+    settingsProvider.address = null;
+    settingsProvider.image = null;
     return Scaffold(
       appBar: AppBar(
         title: Text('Input Page'),
@@ -107,7 +104,7 @@ class PickImage extends StatelessWidget {
 
   Future getImage() async {
     final pickedFile =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+        await picker.getImage(source: ImageSource.camera, imageQuality: 40);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       settingsProvider.setImage = _image;
@@ -193,7 +190,7 @@ class GiveLocation extends StatelessWidget with ChangeNotifier {
       settingsProvider.setPosition = position;
       settingsProvider.setId = id;
       // Position P = Position.fromMap({'latitude': 38.8951, 'longitude': -77.0364});
-      print("Position from map is : $position");
+      // print("Position from map is : $position");
     }).catchError((e) {
       print(e);
     });
@@ -220,9 +217,7 @@ class GiveLocation extends StatelessWidget with ChangeNotifier {
                   backgroundColor: Colors.blue[800],
                 ),
                 onPressed: () async {
-                  print("AWAIT LOCATION! Start");
                   await _getCurrentLocation(context);
-                  print("AWAIT LOCATION! End");
                 },
                 child: Column(
                   children: [

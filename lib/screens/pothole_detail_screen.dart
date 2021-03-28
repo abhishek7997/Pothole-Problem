@@ -85,7 +85,7 @@ class PotHoleDetailScreen extends StatelessWidget {
                 child: pothole.isFixed
                     ? CircleAvatar(
                         backgroundColor: Colors.green,
-                        radius: 70.0,
+                        radius: 60.0,
                         child: Icon(
                           Icons.check,
                           size: 90.0,
@@ -93,7 +93,7 @@ class PotHoleDetailScreen extends StatelessWidget {
                       )
                     : CircleAvatar(
                         backgroundColor: Colors.red,
-                        radius: 70.0,
+                        radius: 60.0,
                         child: Icon(
                           Icons.clear,
                           size: 90.0,

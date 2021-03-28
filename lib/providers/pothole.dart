@@ -36,7 +36,6 @@ class PotHole with ChangeNotifier {
       Placemark place = placemarks[0];
       String addr = "${place.locality}, ${place.postalCode}, ${place.country}";
       address = addr;
-      // print(address);
     } catch (e) {
       print(e);
     }
@@ -64,5 +63,6 @@ class PotHole with ChangeNotifier {
         'longitude': currentPosition.longitude,
         'address': address,
         'image': base64Encode(image.readAsBytesSync()),
+        'isfixed': isFixed,
       };
 }

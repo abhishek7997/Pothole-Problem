@@ -22,7 +22,10 @@ class PotHolesList extends StatefulWidget with ChangeNotifier {
 }
 
 class _PotHolesListState extends State<PotHolesList> {
-  final _stream = _firestore.collection('potholes').snapshots();
+  final _stream = _firestore
+      .collection('potholes')
+      .orderBy("id", descending: true)
+      .snapshots();
 
   Stream<List<PotHole>> lops;
 
