@@ -4,6 +4,11 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'HomePage.dart';
 import '../constants.dart';
 import '../components/rounded_button.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:provider/provider.dart';
+import '../providers/admin.dart';
+
+bool isAdmin = false;
 
 class RegistrationScreen extends StatefulWidget {
   static const String routeName = '/registration';
@@ -44,7 +49,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
-                  email = value;
+                  email = value.trim();
                 },
                 decoration: kTextFieldDecoration.copyWith(
                   hintText: 'Enter your email',
@@ -74,14 +79,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     showSpinner = true;
                   });
                   try {
-                    final newUser = await _auth.createUserWithEmailAndPassword(
-                        email: email, password: password);
-                    if (newUser != null) {
-                      Navigator.pushNamed(context, MyHomePage.routeName);
+                    if (EmailValidator.validate(email)) {
+                      final newUser =
+                          await _auth.createUserWithEmailAndPassword(
+                              email: email, password: password);
+                      if (newUser != null) {
+                        if (email.contains("gov.in", email.indexOf('@'))) {
+                          Provider.of<Admin>(context, listen: false)
+                              .setAdmin(true);
+                        } else {
+                          Provider.of<Admin>(context, listen: false)
+                              .setAdmin(false);
+                        }
+                        Navigator.pushNamed(context, MyHomePage.routeName,
+                            arguments: isAdmin);
+                      }
+                      setState(() {
+                        showSpinner = false;
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Please enter a valid email address')));
                     }
-                    setState(() {
-                      showSpinner = false;
-                    });
                   } catch (e) {
                     if (e.code == 'email-already-in-use') {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

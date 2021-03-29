@@ -34,8 +34,8 @@ class InputPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // getCurrentUser();
     var settingsProvider = Provider.of<PotHole>(context);
-    settingsProvider.address = null;
-    settingsProvider.image = null;
+    // settingsProvider.address = null;
+    // settingsProvider.image = null;
     return Scaffold(
       appBar: AppBar(
         title: Text('Input Page'),
@@ -68,7 +68,10 @@ class InputPage extends StatelessWidget {
               ),
             );
 
-            _firestore.collection('potholes').add(settingsProvider.toJson());
+            _firestore
+                .collection('potholes')
+                .doc(settingsProvider.Id)
+                .set(settingsProvider.toJson());
 
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text('Success!')));

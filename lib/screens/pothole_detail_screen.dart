@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/potholes.dart';
 import '../providers/pothole.dart';
+import '../providers/admin.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PotHoleDetailScreen extends StatelessWidget {
+final _firestore = FirebaseFirestore.instance;
+
+User loggedInUser;
+
+class PotHoleDetailScreen extends StatefulWidget {
   static const routeName = '/pothole-detail';
+
+  @override
+  _PotHoleDetailScreenState createState() => _PotHoleDetailScreenState();
+}
+
+class _PotHoleDetailScreenState extends State<PotHoleDetailScreen> {
+  final firebaseUser = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     final PotHole pothole =
         ModalRoute.of(context).settings.arguments as PotHole;
+    final isAdminProvider = Provider.of<Admin>(context);
+
+    final _data = _firestore
+        .collection('potholes')
+        .orderBy("id", descending: true)
+        .snapshots();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(pothole.Id),
@@ -81,25 +102,39 @@ class PotHoleDetailScreen extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: EdgeInsets.all(12.0),
-                child: pothole.isFixed
-                    ? CircleAvatar(
-                        backgroundColor: Colors.green,
-                        radius: 60.0,
-                        child: Icon(
-                          Icons.check,
-                          size: 90.0,
-                        ),
-                      )
-                    : CircleAvatar(
-                        backgroundColor: Colors.red,
-                        radius: 60.0,
-                        child: Icon(
-                          Icons.clear,
-                          size: 90.0,
-                        ),
-                      ),
-              ),
+                  padding: EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IsFixedIndicator(isFixed: pothole.isFixed),
+                      isAdminProvider.getAdmin != null
+                          ? (isAdminProvider.getAdmin
+                              ? Switch(
+                                  onChanged: (val) {
+                                    // isAdminProvider.setAdmin(val);
+                                    setState(() {
+                                      pothole.setFixed = val;
+                                      print(pothole.getFixed);
+                                      _firestore
+                                          .collection('potholes')
+                                          .doc(pothole.Id)
+                                          .update(
+                                              {'isfixed': pothole.getFixed});
+                                    });
+                                  },
+                                  value: pothole.getFixed,
+                                  activeColor: Colors.blue,
+                                  activeTrackColor: Colors.yellow,
+                                  inactiveThumbColor: Colors.redAccent,
+                                  inactiveTrackColor: Colors.orange,
+                                )
+                              : (pothole.isFixed
+                                  ? Text("Fixed")
+                                  : Text(
+                                      "Not Fixed, contact your administrator")))
+                          : Text("isAdmin is set to null"),
+                    ],
+                  )),
               ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FractionallySizedBox(
@@ -112,6 +147,32 @@ class PotHoleDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class IsFixedIndicator extends StatelessWidget {
+  bool isFixed;
+  IsFixedIndicator({this.isFixed});
+
+  @override
+  Widget build(BuildContext context) {
+    return isFixed
+        ? CircleAvatar(
+            backgroundColor: Colors.green,
+            radius: 50.0,
+            child: Icon(
+              Icons.check,
+              size: 80.0,
+            ),
+          )
+        : CircleAvatar(
+            backgroundColor: Colors.red,
+            radius: 50.0,
+            child: Icon(
+              Icons.clear,
+              size: 80.0,
+            ),
+          );
   }
 }
 

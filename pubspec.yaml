@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^1.0.3
   animated_text_kit: ^4.0.0
   path_provider: ^2.0.1
+  email_validator: ^2.0.1
 
 dev_dependencies:
   flutter_test:

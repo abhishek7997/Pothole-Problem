@@ -9,6 +9,7 @@ import './screens/input_screen.dart';
 import './screens/HomePage.dart';
 import 'providers/potholes.dart';
 import 'providers/pothole.dart';
+import 'providers/admin.dart';
 import 'screens/HomePage.dart';
 
 Future<void> main() async {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: PotHoles()),
         ChangeNotifierProvider.value(value: PotHole()),
+        ChangeNotifierProvider.value(value: Admin()),
       ],
       child: GestureDetector(
         onTap: () {

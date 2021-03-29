@@ -44,12 +44,14 @@ class _PotHolesListState extends State<PotHolesList> {
     final address = pt['address'];
     final latitude = pt['latitude'];
     final longitude = pt['longitude'];
+    final isFixed = pt['isfixed'];
     return PotHole(
       id: id,
       currentPosition:
           Position.fromMap({'latitude': latitude, 'longitude': longitude}),
       address: address,
       image: image,
+      isFixed: isFixed,
     );
   }
 
@@ -96,7 +98,7 @@ class _PotHolesListState extends State<PotHolesList> {
       stream: lops,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          print("No data yet");
+          // print("No data yet");
           return Center(
             child: CircularProgressIndicator(
               backgroundColor: Colors.lightBlueAccent,

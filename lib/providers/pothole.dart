@@ -17,12 +17,14 @@ class PotHole with ChangeNotifier {
     this.currentPosition,
     this.address,
     this.image,
+    this.isFixed,
   });
 
   String get Id => id;
   String get RoughGPSLocation => roughGPSLocation;
   String get Address => address;
   File get Image => image;
+  bool get getFixed => isFixed;
   Position get CurrentPosition => currentPosition;
   double get Latitude =>
       double.parse(currentPosition.latitude.toStringAsFixed(3));
@@ -55,6 +57,11 @@ class PotHole with ChangeNotifier {
 
   set setId(String uid) {
     id = uid;
+  }
+
+  set setFixed(bool isFix) {
+    isFixed = isFix;
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() => {
