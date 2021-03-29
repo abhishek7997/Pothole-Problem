@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/pothole.dart';
 
 class PotHoleItem extends StatelessWidget {
-  PotHoleItem();
-
   @override
   Widget build(BuildContext context) {
     final pothole = Provider.of<PotHole>(context, listen: false);

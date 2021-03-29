@@ -65,6 +65,7 @@ class InputPage extends StatelessWidget {
                 currentPosition: settingsProvider.CurrentPosition,
                 address: settingsProvider.Address,
                 image: settingsProvider.Image,
+                isFixed: false,
               ),
             );
 

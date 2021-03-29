@@ -70,6 +70,6 @@ class PotHole with ChangeNotifier {
         'longitude': currentPosition.longitude,
         'address': address,
         'image': base64Encode(image.readAsBytesSync()),
-        'isfixed': isFixed,
+        'isfixed': isFixed ?? false,
       };
 }
