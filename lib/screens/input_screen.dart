@@ -176,11 +176,16 @@ class GiveLocation extends StatelessWidget with ChangeNotifier {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'Location permissions are permanently denied, we cannot request permissions.')));
         return Future.error(
             'Location permissions are permanently denied, we cannot request permissions.');
       }
 
       if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Location permissions are denied')));
         return Future.error('Location permissions are denied');
       }
     }
