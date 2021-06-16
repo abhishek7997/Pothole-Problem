@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
+class PotHole with ChangeNotifier {
+  String id;
+  String roughGPSLocation;
+  String address;
+  File image;
+  Position currentPosition;
+  bool isFixed = false;
+
+  PotHole({
+    this.id,
+    this.currentPosition,
+    this.address,
+    this.image,
+    this.isFixed,
+  });
+
+  String get Id => id;
+  String get RoughGPSLocation => roughGPSLocation;
+  String get Address => address;
+  File get Image => image;
+  bool get getFixed => isFixed;
+  Position get CurrentPosition => currentPosition;
+  double get Latitude =>
+      double.parse(currentPosition.latitude.toStringAsFixed(3));
+  double get Longitude =>
+      double.parse(currentPosition.longitude.toStringAsFixed(3));
+
+  getAddressFromLatLng() async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          currentPosition.latitude, currentPosition.longitude);
+      Placemark place = placemarks[0];
+      String addr = "${place.locality}, ${place.postalCode}, ${place.country}";
+      address = addr;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Setters
+  set setPosition(Position pos) {
+    currentPosition = pos;
+    getAddressFromLatLng();
+    notifyListeners();
+  }
+
+  set setImage(File img) {
+    image = img;
+    notifyListeners();
+  }
+
+  set setId(String uid) {
+    id = uid;
+  }
+
+  set setFixed(bool isFix) {
+    isFixed = isFix;
+    notifyListeners();
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'latitude': currentPosition.latitude,
+        'longitude': currentPosition.longitude,
+        'address': address,
+        'image': base64Encode(image.readAsBytesSync()),
+        'isfixed': isFixed ?? false,
+      };
+}
