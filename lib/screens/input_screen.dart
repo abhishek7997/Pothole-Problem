@@ -36,64 +36,66 @@ class InputPage extends StatelessWidget {
     var settingsProvider = Provider.of<PotHole>(context);
     // settingsProvider.address = null;
     // settingsProvider.image = null;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Input Page'),
-      ),
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // CustomInputs(),
-              GiveLocation(settingsProvider),
-              PickImage(settingsProvider),
-            ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Input Page'),
+        ),
+        body: Center(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // CustomInputs(),
+                GiveLocation(settingsProvider),
+                PickImage(settingsProvider),
+              ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          String id = DateTime.now().toString();
-          if (settingsProvider.currentPosition != null &&
-              settingsProvider.image != null) {
-            print("Adding Pothole - Dummy Data with id : $id");
-            Provider.of<PotHoles>(context, listen: false).addPothole(
-              PotHole(
-                id: settingsProvider.Id,
-                currentPosition: settingsProvider.CurrentPosition,
-                address: settingsProvider.Address,
-                image: settingsProvider.Image,
-                isFixed: false,
-              ),
-            );
-
-            _firestore
-                .collection('potholes')
-                .doc(settingsProvider.Id)
-                .set(settingsProvider.toJson());
-
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Success!')));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  (settingsProvider.currentPosition == null
-                          ? 'Please Update your location '
-                          : '') +
-                      (settingsProvider.image == null
-                          ? 'Please select an image '
-                          : ''),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            String id = DateTime.now().toString();
+            if (settingsProvider.currentPosition != null &&
+                settingsProvider.image != null) {
+              print("Adding Pothole - Dummy Data with id : $id");
+              Provider.of<PotHoles>(context, listen: false).addPothole(
+                PotHole(
+                  id: settingsProvider.Id,
+                  currentPosition: settingsProvider.CurrentPosition,
+                  address: settingsProvider.Address,
+                  image: settingsProvider.Image,
+                  isFixed: false,
                 ),
-              ),
-            );
-            return;
-          }
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
+              );
+
+              _firestore
+                  .collection('potholes')
+                  .doc(settingsProvider.Id)
+                  .set(settingsProvider.toJson());
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Success!')));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    (settingsProvider.currentPosition == null
+                            ? 'Please Update your location '
+                            : '') +
+                        (settingsProvider.image == null
+                            ? 'Please select an image '
+                            : ''),
+                  ),
+                ),
+              );
+              return;
+            }
+          },
+          child: Icon(Icons.add),
+          backgroundColor: Colors.green,
+        ),
       ),
     );
   }

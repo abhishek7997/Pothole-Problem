@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         },
         child: MaterialApp(
           title: 'Pothole App',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.green,
             accentColor: Colors.lightBlue,
